@@ -1,16 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
-import moment from "moment";
-import RangeSlider from "react-range-slider-input";
-import "react-range-slider-input/dist/style.css";
 import Popup from "reactjs-popup";
-import { FaArrowUp } from "react-icons/fa6";
-import { FaArrowDown } from "react-icons/fa6";
-import { Range } from "react-range";
 import PopupComponent from "./PopupComponent";
 import TimeLine from "./TimeLine";
 
 const AttendanceTable = () => {
-  const [showTimeline, setShowTimeline] = useState(false);
   const exampleData = [
     {
       date: "27-08-2016",
@@ -50,11 +43,11 @@ const AttendanceTable = () => {
         { type: "in", time: "13:57" },
         { type: "out", time: "16:15" },
         { type: "in", time: "16:40" },
-        // { type: "out", time: "20:35" },
+        { type: "out", time: "20:35" },
       ],
     },
   ];
- 
+
   const timeToMinutes = (time) => {
     const parts = time.split(":");
     const h = Number(parts[0]);
@@ -70,23 +63,14 @@ const AttendanceTable = () => {
   const formatDate = (date) => {
     const dateData = date.split("-");
     const d = new Date(dateData[2], dateData[1] - 1, dateData[0]);
-    const weekDay = d.toLocaleString("en-US", { weekday: "short" });
-    const monthName = d.toLocaleString("en-US", { month: "short" });
-    return `${weekDay} ${dateData[0]} , ${monthName}`;
+    return `${d.toLocaleString("en-US", { weekday: "short" })} ${dateData[0]} , ${d.toLocaleString("en-US", { month: "short" })}`;
   };
 
   const calculateHours = (inOut) => {
-    if (!inOut || inOut.length == 0) {
-      return {
-        effctive: "0m",
-        breakHours: "0m",
-        gross: "0m",
-      };
-    }
+    if (!inOut || inOut.length == 0) return { effctive: "0m", breakHours: "0m", gross: "0m" };
     let effectiveHours = 0;
     let grossHours = 0;
     let breakHours = 0;
-    let notes = [];
     let newInOut = [];
 
     const sorted = [...inOut].sort((a, b) => {
@@ -94,47 +78,31 @@ const AttendanceTable = () => {
     });
     for (let i = 0; i < sorted.length; i++) {
       let inTime = sorted[i];
-
       if (i + 1 > sorted.length) break;
-
       let outTime = sorted[i + 1];
-
       if (inTime?.type == "in") {
         if (outTime?.type == "out") {
-          effectiveHours +=
-            timeToMinutes(outTime.time) - timeToMinutes(inTime.time);
+          effectiveHours += timeToMinutes(outTime.time) - timeToMinutes(inTime.time);
           newInOut.push({ in: inTime.time, out: outTime.time });
           i++;
-        } else {
-          notes.push(`out is mising after ${inTime.time}`);
-          newInOut.push({ in: inTime.time, out: "Missing" });
-        }
-      } else if (inTime.type === "out") {
-        notes.push(`in is mising befor ${inTime.time}`);
+        } else newInOut.push({ in: inTime.time, out: "Missing" });
+      } else if (inTime.type === "out")
         newInOut.push({ in: "Missing", out: inTime.time });
-      }
     }
 
     for (let i = 0; i < newInOut.length - 1; i++) {
-      if (newInOut[i + 1]?.out !== "Missing" && newInOut[i]?.in !== "Mising") 
+      if (newInOut[i + 1]?.out !== "Missing" && newInOut[i]?.in !== "Mising")
         breakHours += timeToMinutes(newInOut[i + 1]?.in) - timeToMinutes(newInOut[i]?.out);
     }
 
     if (!breakHours) {
       const firstIn = sorted.find((value) => value.type == "in");
       const lastOut = sorted.reverse().find((value) => value.type == "out");
-
       grossHours = timeToMinutes(lastOut.time) - timeToMinutes(firstIn.time);
       breakHours = grossHours - effectiveHours;
-    } else {
-      grossHours = effectiveHours + breakHours;
-    }
-    return {
-      gross: minutesToHM(grossHours),
-      breakHours: minutesToHM(breakHours),
-      effective: minutesToHM(effectiveHours),
-      newInOut: newInOut,
-    };
+    } else grossHours = effectiveHours + breakHours;
+
+    return { gross: minutesToHM(grossHours), breakHours: minutesToHM(breakHours), effective: minutesToHM(effectiveHours),newInOut: newInOut,};
   };
   return (
     <div className="content" id="content">
@@ -152,8 +120,7 @@ const AttendanceTable = () => {
         </thead>
         <tbody id="tableBody">
           {exampleData.map((data, index) => {
-            const { effective, breakHours, gross, progressVal, newInOut } =
-              calculateHours(data.inOut);
+            const { effective, breakHours, gross, progressVal, newInOut } = calculateHours(data.inOut);
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
@@ -163,28 +130,13 @@ const AttendanceTable = () => {
                     trigger={
                       <div className="timeline-div">
                         <div className="timeline-bar">
-                          {Array.from({ length: 24 }, (_, index) => (
-                            <span key={index} className="step">|</span>
-                          ))}
+                          {Array.from({ length: 24 }, (_, index) => ( <span key={index} className="step">|</span>))}
                           {newInOut.map((session, id) => {
-                            if (
-                              session.in !== "Missing" &&
-                              session.out !== "Missing"
-                            ) {
+                            if (session.in !== "Missing" && session.out !== "Missing") {
                               const start = (timeToMinutes(session.in) / (24 * 60)) * 100;
                               const end = (timeToMinutes(session.out) / (24 * 60)) * 100;
                               const width = end - start;
-                              
-                              return (
-                                <span
-                                  key={id}
-                                  className="work-block"
-                                  style={{
-                                    left: `${start}%`,
-                                    width: `${width}%`,
-                                  }}
-                                ></span>
-                              );
+                              return <span key={id} className="work-block" style={{left: `${start}%`,width: `${width}%`, }}></span>
                             }
                             return null;
                           })}
@@ -199,8 +151,7 @@ const AttendanceTable = () => {
                 <td>{effective || "0m"}</td>
                 <td>{breakHours || "0m"}</td>
                 <td>{gross || "0m"}</td>
-                <td>
-                </td>
+                <td></td>
               </tr>
             );
           })}
