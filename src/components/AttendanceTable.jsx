@@ -222,7 +222,7 @@ const AttendanceTable = () => {
                           ))}
 
                         
-                          {newInOut.map((session, idx) => {
+                          {newInOut.map((session, id) => {
                             if (
                               session.in !== "Missing" &&
                               session.out !== "Missing"
@@ -235,7 +235,7 @@ const AttendanceTable = () => {
 
                               return (
                                 <span
-                                  key={idx}
+                                  key={id}
                                   className="work-block"
                                   style={{
                                     left: `${start}%`,
