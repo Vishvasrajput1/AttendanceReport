@@ -2,15 +2,7 @@ import React from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import { FaArrowDown } from "react-icons/fa6";
 
-const PopupComponent = ({ InOut }) => {
-  const convertTo12HourFormat = (time) => {
-    const [hours, minutes] = time.split(":");
-    const h = parseInt(hours, 10);
-    const period = h >= 12 ? "PM" : "AM";
-    const adjustedHours = h % 12 || 12;
-    return `${adjustedHours}:${minutes} ${period}`;
-  };
-
+const PopupComponent = ({ InOut ,convertTo12HourFormat}) => {
   return (
     <div className="my-popup-content">
       <div className="timeline-popup popup-overlay parent">

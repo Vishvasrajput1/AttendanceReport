@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import Popup from "reactjs-popup";
 import PopupComponent from "./PopupComponent";
-import TimeLine from "./TimeLine";
 
 const AttendanceTable = () => {
   const exampleData = [
@@ -54,10 +53,18 @@ const AttendanceTable = () => {
     const m = Number(parts[1]);
     return h * 60 + m;
   };
+
   const minutesToHM = (minute) => {
     const h = Math.floor(minute / 60);
     const m = minute % 60;
     return `${h}h ${m}m`;
+  };
+   const convertTo12HourFormat = (time) => {
+    const [hours, minutes] = time.split(":");
+    const h = parseInt(hours, 10);
+    const period = h >= 12 ? "PM" : "AM";
+    const adjustedHours = h % 12 || 12;
+    return `${adjustedHours}:${minutes} ${period}`;
   };
 
   const formatDate = (date) => {
@@ -67,15 +74,13 @@ const AttendanceTable = () => {
   };
 
   const calculateHours = (inOut) => {
-    if (!inOut || inOut.length == 0) return { effctive: "0m", breakHours: "0m", gross: "0m" };
+     if (!inOut || inOut.length == 0) return { effctive: "0m", breakHours: "0m", gross: "0m" };
     let effectiveHours = 0;
     let grossHours = 0;
     let breakHours = 0;
     let newInOut = [];
 
-    const sorted = [...inOut].sort((a, b) => {
-      return timeToMinutes(a.time) - timeToMinutes(b.time);
-    });
+    const sorted = [...inOut].sort((a, b) =>  timeToMinutes(a.time) - timeToMinutes(b.time))
     for (let i = 0; i < sorted.length; i++) {
       let inTime = sorted[i];
       if (i + 1 > sorted.length) break;
@@ -92,7 +97,8 @@ const AttendanceTable = () => {
 
     for (let i = 0; i < newInOut.length - 1; i++) {
       if (newInOut[i + 1]?.out !== "Missing" && newInOut[i]?.in !== "Mising")
-        breakHours += timeToMinutes(newInOut[i + 1]?.in) - timeToMinutes(newInOut[i]?.out);
+        breakHours +=
+          timeToMinutes(newInOut[i + 1]?.in) - timeToMinutes(newInOut[i]?.out);
     }
 
     if (!breakHours) {
@@ -102,7 +108,12 @@ const AttendanceTable = () => {
       breakHours = grossHours - effectiveHours;
     } else grossHours = effectiveHours + breakHours;
 
-    return { gross: minutesToHM(grossHours), breakHours: minutesToHM(breakHours), effective: minutesToHM(effectiveHours),newInOut: newInOut,};
+    return {
+      gross: minutesToHM(grossHours),
+      breakHours: minutesToHM(breakHours),
+      effective: minutesToHM(effectiveHours),
+      newInOut: newInOut,
+    };
   };
   return (
     <div className="content" id="content">
@@ -120,7 +131,9 @@ const AttendanceTable = () => {
         </thead>
         <tbody id="tableBody">
           {exampleData.map((data, index) => {
-            const { effective, breakHours, gross, progressVal, newInOut } = calculateHours(data.inOut);
+            const { effective, breakHours, gross, progressVal, newInOut } =
+              calculateHours(data.inOut);
+
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
@@ -130,13 +143,14 @@ const AttendanceTable = () => {
                     trigger={
                       <div className="timeline-div">
                         <div className="timeline-bar">
-                          {Array.from({ length: 24 }, (_, index) => ( <span key={index} className="step">|</span>))}
+                          {Array.from({ length: 24 }, (_, index) => (<span key={index} className="step"> | </span>))}
                           {newInOut.map((session, id) => {
                             if (session.in !== "Missing" && session.out !== "Missing") {
                               const start = (timeToMinutes(session.in) / (24 * 60)) * 100;
-                              const end = (timeToMinutes(session.out) / (24 * 60)) * 100;
+                              const end =(timeToMinutes(session.out) / (24 * 60)) * 100;
                               const width = end - start;
-                              return <span key={id} className="work-block" style={{left: `${start}%`,width: `${width}%`, }}></span>
+                              return <span key={id} className="work-block" style={{left: `${start}%`,width: `${width}%`,}} 
+                              title={`checked In: ${convertTo12HourFormat(session.in)}-${convertTo12HourFormat(session.out)}`}></span>
                             }
                             return null;
                           })}
@@ -145,9 +159,10 @@ const AttendanceTable = () => {
                     }
                     position="bottom center"
                   >
-                    <PopupComponent InOut={newInOut} />
+                    <PopupComponent InOut={newInOut} convertTo12HourFormat={convertTo12HourFormat} />
                   </Popup>
                 </td>
+
                 <td>{effective || "0m"}</td>
                 <td>{breakHours || "0m"}</td>
                 <td>{gross || "0m"}</td>

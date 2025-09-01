@@ -29,6 +29,7 @@ tbody tr:hover {
 
 .progress-cell {
   width: 300px;
+  /* position: relative; */
   /* display: flex;
   align-items: center;
   justify-content: center; */
@@ -40,7 +41,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  height: 15px;
+  height: 12px;
   width: 90%;
   border-radius: 12px;
   border: 1px solid rgba(98, 171, 235, 0.4);
@@ -50,22 +51,23 @@ tbody tr:hover {
 .step {
   width: 2px;
   color: rgb(16, 35, 71);
-  font-size: 10px;
+  font-size: 8px;
 }
 
 .work-block {
   position: absolute;
-  top: 0;
-  height: 100%;
-  background-color: rgba(98, 171, 235, 0.9);
-  background: linear-gradient(90deg, #4a90e2, #357ab7);
+  /* top: 0; */
+  height: 10px;
+  background-color: rgb(54, 124, 210);
   border-radius: 4px;
 }
 
 
 .my-popup-content {
+  /* position: absolute; */
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: auto;
+  z-index: 100;
   background: rgb(255, 255, 255);
   margin-top: 5px;
   width: 100%;
