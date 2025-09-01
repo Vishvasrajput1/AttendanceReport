@@ -4,9 +4,6 @@ import { FaArrowDown } from "react-icons/fa6";
 
 const PopupComponent = ({ InOut }) => {
   const convertTo12HourFormat = (time) => {
-    if (time === "Missing") {
-      return time;
-    }
     const [hours, minutes] = time.split(":");
     const h = parseInt(hours, 10);
     const period = h >= 12 ? "PM" : "AM";
