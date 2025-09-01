@@ -1,0 +1,105 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th {
+  margin-left: 20px;
+  color: black;
+  background-color: rgb(225, 221, 221);
+  padding: 12px;
+  text-align: center;
+  /* font-weight: bold; */
+}
+
+td {
+  text-align: center;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+tbody tr:hover {
+  /* transform: translateY(-1px); */
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+
+
+.progress-cell {
+  width: 300px;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  /* font-weight: 600;
+  color: #333; */
+}
+.timeline-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 15px;
+  width: 90%;
+  border-radius: 12px;
+  border: 1px solid rgba(98, 171, 235, 0.4);
+  background-color: rgba(98, 171, 235, 0.1);
+}
+
+.step {
+  width: 2px;
+  color: rgb(16, 35, 71);
+  font-size: 9px;
+}
+
+.work-block {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: rgba(98, 171, 235, 0.9);
+  background: linear-gradient(90deg, #4a90e2, #357ab7);
+  border-radius: 4px;
+}
+
+
+.my-popup-content {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: auto;
+  background: rgb(255, 255, 255);
+  margin-top: 5px;
+  width: 100%;
+  padding: 5px;
+}
+.my-popup-arrow {
+  color: rgb(255, 255, 255);
+}
+[role='tooltip'].my-popup-content {
+  width: 200px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 3px;
+}
+
+.my-popup-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+[data-popup='tooltip'].my-popup-overlay {
+  background: transparent;
+}
+.parent {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 8px;
+}
+.entry{
+    margin: 4px 4px;
+}
+.entry span{
+    margin-left: 8px;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+}
+.entry:nth-child(even){
+    margin-left: 20px;
+}
